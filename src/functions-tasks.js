@@ -203,8 +203,17 @@ function logger(func, logFunc) {
  *   partialUsingArguments(fn, 'a','b','c')('d') => 'abcd'
  *   partialUsingArguments(fn, 'a','b','c','d')() => 'abcd'
  */
-function partialUsingArguments(/* fn */) {
-  throw new Error('Not implemented');
+function partialUsingArguments(fn, ...rest) {
+  let params = rest;
+  return function curried(...args) {
+    params = params.concat(args);
+    if (params.length >= fn.length) {
+      return fn.apply(this, params);
+    }
+    return function a(...args2) {
+      return curried.apply(this, params.concat(args2));
+    };
+  };
 }
 
 /**
